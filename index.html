@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Crane Input Calculator</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #e3f2fd;
+      margin: 0;
+      padding: 20px;
+    }
+
+    .container {
+      max-width: 600px;
+      margin: auto;
+      background: #ffffff;
+      padding: 25px 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+
+    h2 {
+      color: #0d47a1;
+    }
+
+    label {
+      font-weight: bold;
+      display: block;
+      margin-top: 12px;
+    }
+
+    input {
+      width: 100%;
+      padding: 10px;
+      margin: 5px 0 16px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+
+    .input-group {
+      display: flex;
+      align-items: center;
+    }
+
+    .input-group span {
+      font-weight: bold;
+      margin-right: 6px;
+    }
+
+    button {
+      padding: 12px 24px;
+      background-color: #1976d2;
+      color: white;
+      border: none;
+      border-radius: 6px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #0d47a1;
+    }
+
+    .output {
+      margin-top: 20px;
+      background: #e8f5e9;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #a5d6a7;
+      color: #2e7d32;
+    }
+
+    .error {
+      margin-top: 20px;
+      background: #ffebee;
+      padding: 15px;
+      border-radius: 8px;
+      border: 1px solid #ef9a9a;
+      color: #c62828;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="container">
+    <h2>Crane Specification Calculator</h2>
+
+    <p><strong>Enter values in these ranges:</strong></p>
+    <ul>
+      <li>Capacity: 1–1000 tonnes</li>
+      <li>Span: 1–100 metres</li>
+      <li>Height: 1–100 metres</li>
+      <li>Long Travel: 1–100 metres</li>
+      <li>Duty: M1–M8</li>
+    </ul>
+
+    <label>Capacity (tonnes):</label>
+    <input type="number" id="a" />
+
+    <label>Span (metres):</label>
+    <input type="number" id="b" />
+
+    <label>Height (metres):</label>
+    <input type="number" id="c" />
+
+    <label>Long Travel (metres):</label>
+    <input type="number" id="d" />
+
+    <label>Duty (M1–M8):</label>
+    <div class="input-group">
+      <span>M</span>
+      <input type="number" id="e" min="1" max="8" />
+    </div>
+
+    <button onclick="calculate()">Submit</button>
+
+    <div id="output" class="output" style="display:none;"></div>
+    <div id="error" class="error" style="display:none;"></div>
+  </div>
+
+  <script>
+    function calculate() {
+      const a = parseFloat(document.getElementById('a').value); // Capacity
+      const b = parseFloat(document.getElementById('b').value); // Span
+      const c = parseFloat(document.getElementById('c').value); // Height
+      const d = parseFloat(document.getElementById('d').value); // Long Travel
+      const eValue = parseInt(document.getElementById('e').value.trim()); // Duty (1–8)
+
+      const errorDiv = document.getElementById('error');
+      const outputDiv = document.getElementById('output');
+      errorDiv.style.display = "none";
+      outputDiv.style.display = "none";
+
+      const errors = [];
+
+      if (a < 1 || a > 1000 || isNaN(a)) errors.push("Capacity must be between 1 and 1000 tonnes.");
+      if (b < 1 || b > 100 || isNaN(b)) errors.push("Span must be between 1 and 100 metres.");
+      if (c < 1 || c > 100 || isNaN(c)) errors.push("Height must be between 1 and 100 metres.");
+      if (d < 1 || d > 100 || isNaN(d)) errors.push("Long Travel must be between 1 and 100 metres.");
+      if (isNaN(eValue) || eValue < 1 || eValue > 8) errors.push("Duty must be between M1 and M8.");
+
+      if (errors.length > 0) {
+        errorDiv.innerHTML = "<strong>Please correct the following:</strong><ul><li>" + errors.join("</li><li>") + "</li></ul>";
+        errorDiv.style.display = "block";
+        return;
+      }
+
+      const capacityX2 = a * 2;
+      const type = "M" + eValue;
+      const sumDistances = b + c + d;
+      const planeArea = b + d;
+      const spanHeightBy5 = (b / 5) + (c / 5);
+
+      outputDiv.innerHTML = `
+        <h3>Results:</h3>
+        <p><strong>Capacity x 2:</strong> ${capacityX2} tonnes</p>
+        <p><strong>Type:</strong> ${type}</p>
+        <p><strong>Sum of distances:</strong> ${sumDistances} metres</p>
+        <p><strong>Plane area:</strong> ${planeArea} metres</p>
+        <p><strong>(Span + Height) ÷ 5:</strong> ${spanHeightBy5.toFixed(2)} metres</p>
+      `;
+      outputDiv.style.display = "block";
+    }
+  </script>
+
+</body>
+</html>
+
